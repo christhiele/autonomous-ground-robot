@@ -73,6 +73,14 @@ def partialright(sec, dc):
     p4dc = dc
     move(sec, p1dc, p2dc, p3dc, p4dc)
 
+def stop(sec):
+    p1dc = 0
+    p2dc = 0
+    p3dc = 0
+    p4dc = 0
+    move(sec, p1dc, p2dc, p3dc, p4dc)
+
+
 def cleanuppwm():
     p1.stop()
     p2.stop()
@@ -83,7 +91,6 @@ def cleanuppwm():
 
 def reset():
     gpio.setwarnings(False)
-    init()
     gpio.cleanup()
 
 if __name__ == "__main__":
@@ -100,3 +107,4 @@ if __name__ == "__main__":
     print("50% right w/ pwm")
     partialright(10,50)
     cleanuppwm()
+    reset()
