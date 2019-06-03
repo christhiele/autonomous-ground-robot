@@ -45,3 +45,15 @@ version 5
 * numpy (location mapping)
 * matplotlib (location mapping)
 * FaBo9Axis_MPU9250 (Accelerometer, Gyroscope, & Magnetometer data from mpu9250)
+
+## GPIO Assignments (can change by modifying code)
+* GPIO 2 - Accelerometer, Gyroscope, & Magnetometer
+* GPIO 3 - Accelerometer, Gyroscope, & Magnetometer
+* GPIO 4 - Accelerometer, Gyroscope, & Magnetometer
+* GPIO 14 - Servo
+* GPIO 17 - Motor
+* GPIO 18 - Ultrasonic Sensor
+* GPIO 21 - Ultrasonic Sensor
+* GPIO 22 - Motor
+* GPIO 23 - Motor
+* GPIO 24 - Motor
