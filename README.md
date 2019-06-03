@@ -63,6 +63,6 @@ version 5
 
 ## GPIO Assignments (can change without modifying code)
 * 5V - Not Used
-* 3V - Accelerometer, Gyroscope, & Magnetometer
+* 3.3V - Accelerometer, Gyroscope, & Magnetometer
 * Ground (Pin 9)(3v) - Accelerometer, Gyroscope, & Magnetometer
 * Ground (Pin 14)(5V) - Breadboard Power
