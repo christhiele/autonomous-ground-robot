@@ -10,15 +10,23 @@ version 5
 - [x] Gyroscope
 - [x] Magnetmeter
 - [ ] Distance Sensor (was working, currently not)
+- [x] Power Control (7.4V Charging On/Off via RPi 5V USB + Step Up Converter)
+
  
 ## Advanced Functions
 - [x] Terminal Keyboard Control
-- [x] 7.4V Charging On/Off
-- [x] Video Streaming on Local Network
-- [ ] Relative Compass Positioning
 - [ ] GUI Overlay
+- [x] Video Streaming on Local Network
+- [ ] Compass Positioning (with Calibration)
+- [ ] Speed Display/Control
+- [ ] Automatic Impact Detection
 - [ ] Automatic Location Mapping
-- [ ] Automatic Power Docking
+- [ ] Automatic Power Control (Monitor)
+- [ ] Automatic Power Control (Dock)
+- [ ] Automatic Power Control (Constant Voltage/Constant Current Lithium Ion Charging) (7.4V)
+- [x] Automatic Power Control (Constant Voltage/Constant Current Lithium Ion Charging) (3.7V) 
+- [ ] Automatic Power Control (UPS) (7.4V)
+- [x] Automatic Power Control (UPS) (3.7V)
 
 ## Required Linux Dependencies
 * Python3
