@@ -42,6 +42,6 @@ version 5
 * Python3
 * RPi.GPIO
 * curses (keyboard control)
-* numpy (advanced math functions)
-* matplotlib (advanced math functions)
-* FaBo9Axis_MPU9250 (MPU 9250 library)
+* numpy (location mapping)
+* matplotlib (location mapping)
+* FaBo9Axis_MPU9250 (Accelerometer, Gyroscope, & Magnetometer data from mpu9250)
