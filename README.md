@@ -30,8 +30,8 @@ version 5
 
 ## Component List
 * raspberry pi 3 b+
-* 7.4 V Power Supply (2x Lithium Ion 18650 in Series + Protection Board with Balance Charging)
-* 3.7 V Power Supply (1-2 Lithium Ion 18650 in Parallel - included in RPi UPS)
+* 7.4 V Power Supply (2 Lithium Ion 18650 Batteries in Series + Protection Board with Balance Charging)
+* 3.7 V Power Supply (1-2 Lithium Ion 18650 Batteries in Parallel - included in RPi UPS)
 * RPi UPS PowerPack (for easy UPS support and RPI stability)
 * 7.4 -> 5 V Step Down Converter (Power Servos, Sensors)
 * 5 -> 7.4 V Step Up Converter (Recharging 7.4V)
