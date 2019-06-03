@@ -51,9 +51,9 @@ version 5
 * GPIO 3 - Accelerometer, Gyroscope, & Magnetometer
 * GPIO 4 - Accelerometer, Gyroscope, & Magnetometer
 * GPIO 14 - Servo
-* GPIO 17 - Motor
-* GPIO 18 - Ultrasonic Sensor
+* GPIO 17 - Motor (via Motor Control Board)
+* GPIO 18 - Ultrasonic Sensor (via Breadboard)
 * GPIO 21 - Ultrasonic Sensor
-* GPIO 22 - Motor
-* GPIO 23 - Motor
-* GPIO 24 - Motor
+* GPIO 22 - Motor (via Motor Control Board)
+* GPIO 23 - Motor (via Motor Control Board)
+* GPIO 24 - Motor (via Motor Control Board)
