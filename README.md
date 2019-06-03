@@ -4,12 +4,13 @@ version 5
 
 ## Component List
 * raspberry pi 3 b+
-* 7.4 V Series Lithium Ion 18650 Power Supply (including Protection Board with Balance)
-* RPi UPS PowerPack (w/ 3.7 V Lithion Ion Cell) (for easy UPS support and RPI stability)
+* 7.4 V Power Supply (2x Lithium Ion 18650 in Series + Protection Board with Balance Charging)
+* 3.7 V Power Supply (1-2 Lithium Ion 18650 in Parallel - included in RPi UPS)
+* RPi UPS PowerPack (for easy UPS support and RPI stability)
 * 7.4 -> 5 V Step Down Converter (Power Servos, Sensors)
-* 5 -> 7.4 V Step Up Converter (Recharging)
+* 5 -> 7.4 V Step Up Converter (Recharging 7.4V)
 * Motor Control Board
-* 2x 6V Motors
+* Motors (2x 6V DC gear motors)
 * Raspberry Pi Camera
 * Servo (e.g. sg90)
 * Ultrasonic Sensor (e.g. hc-sro4)
@@ -26,7 +27,7 @@ version 5
 - [x] Accelerometer
 - [x] Gyroscope
 - [x] Magnetmeter
-- [ ] Distance Sensor (was working, currently broken)
+- [ ] Distance Sensor (was working, currently not)
  
 ## Advanced Functions
 - [x] Terminal Keyboard Control
@@ -35,4 +36,12 @@ version 5
 - [ ] Relative Compass Positioning
 - [ ] GUI Overlay
 - [ ] Automatic Location Mapping
-- [ ] Automatic Power Refilling
+- [ ] Automatic Power Docking
+
+## Required Python Libraries
+* Python3
+* RPi.GPIO
+* curses (keyboard control)
+* numpy (advanced math functions)
+* matplotlib (advanced math functions)
+* FaBo9Axis_MPU9250 (MPU 9250 library)
