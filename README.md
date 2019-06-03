@@ -13,6 +13,7 @@ version 5
 * Raspberry Pi Camera
 * Servo (e.g. sg90)
 * Ultrasonic Sensor (e.g. hc-sro4)
+* 3 Axis Accelerometer, Gyroscope, & Magnetometer (e.g. mpu9250)
 * Breadboard & Wires
 
 ## Breadboard Diagram
