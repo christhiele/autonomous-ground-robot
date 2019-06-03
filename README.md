@@ -1,5 +1,5 @@
 # robotika
-python framework for a raspberry pi autonomous robot
+python framework for a raspberry pi autonomous ground robot
 version 5
 
 ## Functions
