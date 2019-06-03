@@ -7,7 +7,7 @@ version 5
 * 7.4 V Series Lithium Ion 18650 Power Supply (including Protection Board with Balance)
 * RPi UPS PowerPack (w/ 3.7 V Lithion Ion Cell) (for easy UPS support and RPI stability)
 * 7.4 -> 5 V Step Down Converter (Power Servos, Sensors)
-* 5 to 7.4 Step Up Convert (Recharging)
+* 5 -> 7.4 V Step Up Converter (Recharging)
 * Motor Control Board
 * 2x 6V Motors
 * Raspberry Pi Camera
