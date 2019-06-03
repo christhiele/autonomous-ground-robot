@@ -1,7 +1,8 @@
 # robotika
 python framework for a raspberry pi robot
+version 5
 
-## Tank Version 5 Component List
+## Component List
 * raspberry pi 3 b+
 * 7.4 V Series Lithium Ion 18650 Power Supply (including Protection Board with Balance)
 * RPi UPS PowerPack (w/ 3.7 V Lithion Ion Cell) (for easy UPS support and RPI stability)
