@@ -14,3 +14,5 @@ python framework for a raspberry pi robot
 * Ultrasonic Sensor (e.g. hc-sro4)
 * Breadboard & Wires
 
+## Breadboard Diagram
+![Breadboard Diagram](https://github.com/christhiele/robotika/blob/master/misc/tankv5_bb.png)
