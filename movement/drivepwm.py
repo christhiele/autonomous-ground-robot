@@ -14,11 +14,11 @@ gpio.setup(IN2, gpio.OUT)
 gpio.setup(IN3, gpio.OUT)
 gpio.setup(IN4, gpio.OUT)
 
-frequency = 400
-p1 = gpio.PWM(IN1, frequency)
-p2 = gpio.PWM(IN2, frequency)
-p3 = gpio.PWM(IN3, frequency)
-p4 = gpio.PWM(IN4, frequency)
+motor_frequency = 400
+p1 = gpio.PWM(IN1, motor_frequency)
+p2 = gpio.PWM(IN2, motor_frequency)
+p3 = gpio.PWM(IN3, motor_frequency)
+p4 = gpio.PWM(IN4, motor_frequency)
 p1.start(0)
 p2.start(0)
 p3.start(0)
@@ -80,14 +80,11 @@ def stop(sec):
     p4dc = 0
     move(sec, p1dc, p2dc, p3dc, p4dc)
 
-
-def cleanuppwm():
+def endmotor():
     p1.stop()
     p2.stop()
     p3.stop()
     p4.stop()
-
-    gpio.cleanup()
 
 def reset():
     gpio.setwarnings(False)
@@ -103,8 +100,8 @@ if __name__ == "__main__":
     print("pivot right w/ pwm")
     pivotright(2)
     print("50% left w/ pwm")
-    partialleft(10,50)
+    partialleft(2,50)
     print("50% right w/ pwm")
-    partialright(10,50)
-    cleanuppwm()
+    partialright(2,50)
+    endmotor()
     reset()
