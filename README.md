@@ -20,8 +20,11 @@ version 5
 - [ ] Automatic Location Mapping
 - [ ] Automatic Power Docking
 
-## Required Python Libraries
+## Required Linux Dependencies
 * Python3
+* Motion
+
+## Required Python Libraries
 * RPi.GPIO
 * curses (keyboard control)
 * numpy (location mapping)
