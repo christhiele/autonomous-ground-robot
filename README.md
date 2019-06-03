@@ -30,7 +30,7 @@ python framework for a raspberry pi robot
 - [x] Terminal Keyboard Control
 - [x] 7.4V Charging On/Off
 - [x] Video Streaming on Local Network
-- [ ] Relative Compass Location
+- [ ] Relative Compass Positioning
 - [ ] GUI Overlay
 - [ ] Automatic Location Mapping
 - [ ] Automatic Power Refilling
