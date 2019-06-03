@@ -18,11 +18,19 @@ python framework for a raspberry pi robot
 ![Breadboard Diagram](https://github.com/christhiele/robotika/blob/master/misc/tankv5_bb.png)
 
 ## Functions
- [x] Motors (Forward/Backwards, Pivot, & Turn)
- [x] Servo
- [x] Camera
- [ ] Distance Sensor
+- [x] Motors (Forward/Backwards, Pivot, & Turn)
+- [x] Servo
+- [x] Camera
+- [x] Accelerometer
+- [x] Gyroscope
+- [x] Magnetmeter
+- [ ] Distance Sensor (was working, currently broken)
  
 ## Advanced Functions
- [x] Terminal Keyboard Control
- [x] Lion
+- [x] Terminal Keyboard Control
+- [x] 7.4V Charging On/Off
+- [x] Video Streaming on Local Network
+- [ ] Relative Compass Location
+- [ ] GUI Overlay
+- [ ] Automatic Location Mapping
+- [ ] Automatic Power Refilling
