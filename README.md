@@ -22,7 +22,7 @@ version 5
 
 ## Required Linux Dependencies
 * Python3
-* Motion
+* Motion (for Camera streaming)
 
 ## Required Python Libraries
 * RPi.GPIO
