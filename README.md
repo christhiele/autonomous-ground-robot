@@ -40,7 +40,7 @@ version 5
 * FaBo9Axis_MPU9250 (Accelerometer, Gyroscope, & Magnetometer data from mpu9250)
 
 ## Component List
-* raspberry pi 3 b+
+* Raspberry Pi 3 B+
 * 7.4 V Power Supply (2 Lithium Ion 18650 Batteries in Series + Protection Board with Balance Charging)
 * 3.7 V Power Supply (1-2 Lithium Ion 18650 Batteries in Parallel - included in RPi UPS)
 * RPi UPS PowerPack (for easy UPS support and RPI stability)
