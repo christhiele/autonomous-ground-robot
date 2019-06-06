@@ -46,7 +46,7 @@ version 5
 * RPi UPS PowerPack (for easy UPS support and RPI stability)
 * 7.4 -> 5 V Step Down Converter (Power Servos, Sensors)
 * 5 -> 7.4 V Step Up Converter (Recharging 7.4V)
-* Motor Control Board
+* Motor Control Board (e.g. L298n)
 * Motors (2x 6V DC gear motors)
 * Raspberry Pi Camera
 * Servo (e.g. sg90)
