@@ -2,7 +2,7 @@
 python framework for an autonomous ground robot with raspberry pi.
 version 5
 
-## Functions
+## Basic Functions
 - [x] Motors (Forward/Backwards, Pivot, & Turn)
 - [x] Servo
 - [x] Camera
