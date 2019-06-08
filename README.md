@@ -1,4 +1,4 @@
-# robotika
+# Autonomous Ground Robot
 python framework for a raspberry pi autonomous ground robot
 version 5
 
