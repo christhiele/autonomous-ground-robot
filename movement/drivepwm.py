@@ -14,7 +14,7 @@ gpio.setup(IN2, gpio.OUT)
 gpio.setup(IN3, gpio.OUT)
 gpio.setup(IN4, gpio.OUT)
 
-motor_frequency = 400
+motor_frequency = 400 #set based on motor specs
 p1 = gpio.PWM(IN1, motor_frequency)
 p2 = gpio.PWM(IN2, motor_frequency)
 p3 = gpio.PWM(IN3, motor_frequency)
@@ -71,6 +71,20 @@ def partialright(sec, dc):
     p2dc = 100
     p3dc = 0
     p4dc = dc
+    move(sec, p1dc, p2dc, p3dc, p4dc)
+
+def pivotpartialleft(sec,dc):
+    p1dc = dc
+    p2dc = 0
+    p3dc = 0
+    p4dc = dc
+    move(sec, p1dc, p2dc, p3dc, p4dc)
+
+def pivotpartialright(sec,dc):
+    p1dc = 0
+    p2dc = dc
+    p3dc = dc
+    p4dc = 0
     move(sec, p1dc, p2dc, p3dc, p4dc)
 
 def stop(sec):
