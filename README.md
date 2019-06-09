@@ -17,7 +17,7 @@ version 5
 - [x] Terminal Keyboard Control
 - [ ] GUI Overlay
 - [x] Video Streaming on Local Network
-- [ ] Compass Positioning (with Calibration)
+- [x] Compass Positioning (with Calibration)
 - [ ] Speed Display/Control
 - [ ] Automatic Impact Detection
 - [ ] Automatic Location Mapping
