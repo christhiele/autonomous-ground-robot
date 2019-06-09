@@ -4,23 +4,27 @@ import curses
 import os
 from ultrasonic import *
 from servo import *
+import power
 
 # intializes curses globally.
 
 stdscr = curses.initscr()
 
-# power saving - turn off idle services
-os.system("echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind")  # turn off usb + ethernet
-os.system("sudo /opt/vc/bin/tvservice -o")  # turnoff hdmi
-os.system("sudo rfkill block bluetooth")
-
 # start motion. Note - make sure visudo config file is updated for user to skip password authentication)
 os.system("sudo service motion start")
 
 def keyboard():
+
+    # power saving - turn off idle services
+    result = power.powercheck()
+    if result is True:
+        power.poweroff()
+        time.sleep(3)     # give time for voltage to normalize
+
     sec = .1 #time per
 
-    curses.noecho() #set up curses
+    # set up curses
+    curses.noecho()
     curses.cbreak()
     stdscr.keypad(1)
 
@@ -81,9 +85,9 @@ def endkeyboard():
     os.system("sudo service motion stop")
 
     #restart idle services
-    os.system("echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/bind") #usb + ethernet
-    os.system("sudo /opt/vc/bin/tvservice -p") #hdmi
-    os.system("sudo rfkill unblock bluetooth") #bluetooth
+    result = power.powercheck()
+    if result is False:
+        power.poweron()
 
 if __name__ == "__main__":
     # keyboard()
