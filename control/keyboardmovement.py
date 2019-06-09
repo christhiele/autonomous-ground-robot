@@ -5,6 +5,7 @@ import os
 from ultrasonic import *
 from servo import *
 import power
+import orientation
 
 # intializes curses globally.
 
@@ -30,6 +31,9 @@ def keyboard():
 
     degree = 0
 
+    # get default magnet calibration data
+    calibratedtime, C, ymax, normal = orientation.checkmagnetdata()
+
     while 1:
         c = stdscr.getch()
         if c == ord('w'):
@@ -37,17 +41,16 @@ def keyboard():
         elif c == ord('s'):
             reverse(sec)
         elif c == ord('a'):
-            partialleft(sec, 0)
+            pivotleft(sec)
         elif c == ord('d'):
-            partialright(sec, 0)
+            pivotright(sec)
         elif c == ord('q'):
             partialleft(sec, 50)
         elif c == ord('e'):
             partialright(sec, 50)
-        elif c == ord('z'):
-            pivotleft(sec)
-        elif c == ord('c'):
-            pivotright(sec)
+        elif c == ord('g'):
+            coordsample, angle = orientation.getmedianmagnet(C, ymax, normal)
+            print("Angle =", angle)
         elif c == ord('x'):
             stop(sec)
         elif c == ord('r'):
@@ -84,11 +87,6 @@ def endkeyboard():
     #exit motion (webcam)
     os.system("sudo service motion stop")
 
-    #restart idle services
-    result = power.powercheck()
-    if result is False:
-        power.poweron()
-
 if __name__ == "__main__":
-    # keyboard()
-    endkeyboard()
+    keyboard()
+    # endkeyboard()
