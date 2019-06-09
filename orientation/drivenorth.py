@@ -6,6 +6,7 @@ import calibratemagnet
 import time
 import numpy as np
 import power
+import statistics
 
 def magnetmain():
     # power saving - turn off idle services (power transfer)
@@ -124,7 +125,6 @@ def getangle(C, coordmax, coordsample, normal):
 
     return angle, vlenymax, vlensample
 
-
 def getvectorlength(vector):
     x = vector[0]
     y = vector[1]
@@ -216,42 +216,17 @@ def testangles():
             drivepwm.stop(.1)
             pivoting = False
 
-        #set up dynamic waiting
-        t_loop_start = time.time()
-
         # get sample mag coordinates
-        coordsample = orientation.getmagnet()
+        coordsample = getmediansample(C, ymax, normal)
 
-        # verify sample mag coordinates
-        if coordsample['x'] == 0 and coordsample['y'] == 0 and coordsample['z'] == 0:
-            print("Error - Invalid Sample Magnetic Coordinates. Resampling.")
-            waitdelay(t_loop_start, .15)
-            continue #restart loop if empty coordinates
-
-        coordsample = [coordsample['x'], coordsample['y'], coordsample['z']] #convert from dictionary to list
-        coordsample = np.array(coordsample, dtype=float)  # convert from list to np array
-
-        # process various data
+             # process various data
         angle, vlenymax, vlensample = getangle(C, ymax, coordsample, normal)
 
-
-        # test data for sanity (vector length comparison), 1 strike, restart loop, 2 strikes, abort loop
-        result = testvlen(vlenymax, vlensample)
-        if result is False:
-            print("Error - Invalid Vector Length. Resampling.")
-            waitdelay(t_loop_start, .15)
-            continue
-
-        # test data for sanity (angle change direction comparison)
+         # test data for sanity (angle change direction comparison)
         rotation_delay = testangle(oldangle,angle,rotation_delay)
 
         #change sampleangle to oldangle
         oldangle = angle
-
-
-        # wait time for GC and sensor refresh - dynamic
-        waitdelay(t_loop_start, .15)
-
 
 
     # cleanup
@@ -277,10 +252,14 @@ def testangle(oldangle, sampleangle,rotation_delay):
         print("Pivoting at 75 percent speed at angle %10.2f degrees [%s]" % (sampleangle,rotation))
         rotation_delay = 2 # reset counter
 
-    elif anglediff < 0:
+    elif -200 < anglediff < 0:
         rotation = "Counter-Clockwise/Decrease"
         print("Pivoting at 75 percent speed at angle %10.2f degrees [%s] - ERROR" % (sampleangle,rotation))
         rotation_delay = rotation_delay - 1
+    elif -200 > anglediff:
+        rotation = "Flip"
+        print("Pivoting at 75 percent speed at angle %10.2f degrees [%s]" % (sampleangle,rotation))
+        rotation_delay = 2 # reset counter
     elif anglediff == 0:
         rotation = "Centered"
         rotation_delay = 2 # reset counter
@@ -292,36 +271,61 @@ def testangle(oldangle, sampleangle,rotation_delay):
 
     return rotation_delay
 
-def getsamples():
+def getmediansample(C, ymax, normal):
+    #get three samples
+    coordsample1, angle1 = getasample(C, ymax, normal)
+    coordsample2, angle2 = getasample(C, ymax, normal)
+    coordsample3, angle3 = getasample(C, ymax, normal)
 
+    #convert angles to np array and find median
+    angles = np.array((angle1, angle2, angle3),dtype=float)
+    medianangle = np.median(angles)
 
-def getasample():
-    #get and scrub first coordinates
-    t_loop_start = time.time()
-    coordsample = orientation.getmagnet()
+    #return coordsample with the median angle
+    if medianangle == angle1:
+        return coordsample1
+    elif medianangle == angle2:
+        return coordsample2
+    elif medianangle == angle3:
+        return coordsample3
+    else:
+        return ArithmeticError
 
-    #
-    if coordsample['x'] == 0 and coordsample['y'] == 0 and coordsample['z'] == 0:
-        print("Error - Invalid Sample Magnetic Coordinates. Resampling.")
-        waitdelay(t_loop_start, .13)
+def getasample(C, ymax, normal):
+    testvlenerror = 0
+    while True:
+        #get coordinates
+        t_loop_start = time.time()
+        coordsample = orientation.getmagnet()
 
+        # test data for null values
+        if coordsample['x'] == 0 and coordsample['y'] == 0 and coordsample['z'] == 0:
+            # print("Error - Invalid Sample Magnetic Coordinates. Resampling.")
+            waitdelay(t_loop_start, .15)
+            continue #restart loop
 
-    waitdelay(t_loop_start, .13)
+        coordsample = [coordsample['x'], coordsample['y'], coordsample['z']]  # convert from dictionary to list
+        coordsample = np.array(coordsample, dtype=float)  # convert from list to np array
 
+        angle, vlenymax, vlensample = getangle(C, ymax, coordsample, normal)
 
+        # test data for sanity (vector length comparison)
+        result = testvlen(vlenymax, vlensample)
+        if result is False:
+            # print("Error - Invalid Vector Length. Resampling.")
+            waitdelay(t_loop_start, .15)
+            testvlenerror += 1
+            if testvlenerror > 2:
+                break #end loop
+            else:
+                continue #restart loop
+        elif result is True:
+            break #end loop
 
-    #get and scrub first coordinates
-    t_loop_start = time.time()
-    coordsample2 = orientation.getmagnet()
-    waitdelay(t_loop_start, .13)
+    #delay for GC and refresh
+    waitdelay(t_loop_start, .15)
 
-    t_loop_start = time.time()
-    coordsampl3 = orientation.getmagnet()
-    waitdelay(t_loop_start, .13)
-
-
-    coordsample = [coordsample['x'], coordsample['y'], coordsample['z']]  # convert from dictionary to list
-    coordsample = np.array(coordsample, dtype=float)  # convert from list to np array
+    return coordsample, angle
 
 
 
