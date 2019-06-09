@@ -1,5 +1,6 @@
 # Autonomous Ground Robot
-python framework for an autonomous ground robot with raspberry pi.
+python framework for an autonomous ground robot with raspberry pi
+
 version 5
 
 ## Basic Functions
