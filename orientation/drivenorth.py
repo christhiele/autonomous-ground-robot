@@ -5,19 +5,18 @@ import drivepwm
 import calibratemagnet
 import time
 import numpy as np
-import power
-import statistics
 
-def magnetmain():
-    # power saving - turn off idle services (power transfer)
-    result = power.powercheck()
-    if result is True:
-        power.poweroff()
-        time.sleep(3)     # give time for voltage to normalize
+def pivottoangle():
+    # pivots to specified angle
+    pass
+
+def pivottonorth():
+    #pivots to north - based on shortest possible route.
+
 
     # gather pre-existing magnet data
     print("Verifying existing magnet data...")
-    calibratedtime, C, ymax, normal = checkmagnetdata()
+    calibratedtime, C, ymax, normal = orientation.checkmagnetdata()
 
     #recalibrate test : old data
     lastcalibrated = time.time() - float(calibratedtime)
@@ -28,180 +27,78 @@ def magnetmain():
     else:
         print("Verify Date: PASS")
 
-    #recalibrate test : distorted data
-    coordsample = orientation.getmagnet()
-    coordsample = [coordsample['x'], coordsample['y'], coordsample['z']]
-    coordsample = np.array(coordsample, dtype=float)  # already input as list
-    angle, vlenymax, vlensample  = getangle(C, ymax, coordsample, normal)
-    result = testvlen(vlenymax, vlensample)
-    if result is False:
-        print("Verify Initial Distortion: FAIL - Recalibrating")
-        calibratedtime, C, ymax, normal = recalibratemagnet()
-        angle, vlenymax, vlensample = getangle(C, ymax, coordsample, normal) #redo angle, vlen calcs
-        result = True
-    else:
-        print("Verify Initial Distortion: PASS")
-
     print("Verification Complete. Starting Pivot to North...")
 
     # start pivoting
-    pivoting = True
-    testvlenfails = 0 #set errorflag to 0
+    olddirection = "E"
+    directionerror = 0
 
-    while pivoting is True:
+    while True:
         # get sample mag coordinates
-        coordsample = orientation.getmagnet()
-        coordsample = [coordsample['x'], coordsample['y'], coordsample['z']]
-        coordsample = np.array(coordsample, dtype=float)  # already input as list
-
-        # process various data
-        angle, vlenymax, vlensample = getangle(C, ymax, coordsample, normal)
-
-        # test data for sanity (vector length comparison), 1 strike, restart loop, 2 strikes, abort loop
-        result = testvlen(vlenymax, vlensample)
-        if result is False and testvlenfails < 2:
-            continue #ignore result and get a new sample
-
-        elif result is False and testvlenfails > 1:
-            drivepwm.stop(.1) # stop pivot
-            pivoting = False #break out of loop
-        elif result is True:
-            testvlenfails = 0 #reset error count
+        coordsample, angle = orientation.getmedianmagnet(C, ymax, normal)
 
         print("Pivoting at angle %10.2f degrees" % angle)
-        if -10 < angle < 10:
-            drivepwm.stop(.1)
-            pivoting = False # break out of loop
-        elif 10 <= angle <= 45:
-            drivepwm.pivotpartialright(.1, 50)
-        elif angle > 45:
-            drivepwm.pivotpartialright(.1, 75)
-        elif -10 >= angle >= -45:
-            drivepwm.pivotpartialleft(.1, 50)
-        elif angle < -45:
-            drivepwm.pivotpartialleft(.1, 75)
 
-    # recalibrate and restart
-    if testvlenfails > 1:
-        print("Error - Projected vs Actual Vector Length exceeds 25% difference. Restarting.")
+        # declare pivot direction
+        if angle >= 10:
+            newdirection = "L"
+        elif angle <= 10:
+            newdirection = "R"
+        else:
+            pass
+
+        # test if directional change
+        if olddirection == "E":  # empty
+            pass
+        elif newdirection != olddirection:
+            directionerror += 1
+        else:
+            directionerror = 0
+
+        if directionerror == 1:
+            continue
+
+        # set movement
+        if abs(angle) < 10:
+            drivepwm.stop(.01)
+            break # break out of loop
+        elif 10 <= abs(angle) < 30:
+            pivotpartialbidirect(.01, 50, newdirection)
+        elif 30 <= abs(angle) <= 90:
+            pivotpartialbidirect(.01, 75, newdirection)
+        elif abs(angle) > 90:
+            pivotpartialbidirect(.01, 100, newdirection)
+
+        # set old direction for next loop
+        olddirection = newdirection
+
+    #cleanup
+    drivepwm.endmotor()
+    reset()
+
+    #print finished note
+    print("Finished Pivoting North - Current Angle is %s" % angle)
+
+def pivotpartialbidirect(sec,dc,direction):
+    if direction == "L":
+        drivepwm.pivotpartialleft(sec, dc)
+    elif direction == "R":
+        drivepwm.pivotpartialright(sec, dc)
+
+def testpivot():
+    try:
+        calibratedtime, C, ymax, normal = orientation.checkmagnetdata()
+
+    except:
         calibratedtime, C, ymax, normal = recalibratemagnet()
-        magnetmain()
-    else: #else to ensure doesn't repeat if recalibration triggers.
-
-        #cleanup
-        drivepwm.endmotor()
-        reset()
-
-        #print finished note
-        print("Finished Pivoting North - Current Angle is %s" % angle)
-
-def reset():
-    gpio.cleanup()
-
-def recalibratemagnet():
-    dx, dy, dz = calibratemagnet.calibratemagnet()
-    processmagnet.processmagnet(dx, dy, dz)
-    calibratedtime, C, ymax, normal = checkmagnetdata()
-    return calibratedtime, C, ymax, normal
-
-
-def getangle(C, coordmax, coordsample, normal):
-    # print(type(C), type(coordmax), type(coordsample), type(normal))
-    # print(C, coordmax, coordsample, normal)
-    # print(C, coordmax, coordsample, normal)
-    # print(type(C), type(coordmax), type(coordsample), type(normal))
-
-    u = coordmax - C
-    v = coordsample - C
-    n = normal
-    angle = np.arctan2(np.dot(n, np.cross(u, v)), np.dot(u, v))
-    angle = np.degrees(angle)
-
-    vlenymax = getvectorlength(u)
-    vlensample = getvectorlength(v)
-    # print(C)
-    # print(u, vlenymax)
-    # print(v, vlensample)
-
-    return angle, vlenymax, vlensample
-
-def getvectorlength(vector):
-    x = vector[0]
-    y = vector[1]
-    z = vector[2]
-    vlen = np.sqrt(x ** 2 + y ** 2 + z ** 2)  # vector length = SQRT(x^2 + y^2 +z^2)
-    # print(vlen, x, y, z)
-    return vlen
-
-
-def testvlen(vlenymax, vlensample):
-
-    #very rough approximation since the vector length is of a 2D->3D transforamtion of the projected circle, meaning the vector lengths will likely not be the same regardless. But since some variability is inevitbale with sensor, saving processing power for a rough estimate seemed best.
-
-    errortrigger = 0.50  # 50% change from base radius of projected circle
-    # print(type(vlenymax), type(vlensample))
-
-    #convert data
-    # vlen = float(vlen)
-    # r = float(vlen)
-
-    diff = abs(vlensample - vlenymax) / vlenymax
-    # print(vlensample,vlenymax,diff)
-    if diff > errortrigger:
-        return False
-    else:
-        return True
-
-
-def checkmagnetdata():
-    f = open("magnetdata.txt", "r")
-    fl = f.readlines()
-    for idx,value in enumerate(fl):
-        # print(idx, value)
-        if idx == 1:
-            calibratedtime = value.rstrip() # strip to remove /n and other ending spaces in string
-        elif idx == 2:
-            C = value.rstrip()
-        elif idx == 3:
-            ymax = value.rstrip()
-        elif idx == 4:
-            normal = value.rstrip()
-    # print(calibratedtime, C, ymax, normal)
-
-    # remove proxy brackets from string
-    C = C.replace("[", "")
-    C = C.replace("]", "")
-    ymax = ymax.replace("[", "")
-    ymax = ymax.replace("]", "")
-    normal = normal.replace("[", "")
-    normal = normal.replace("]", "")
-
-    # convert strings to lists
-    C = C.split(", ")
-    ymax = ymax.split(", ")
-    normal = normal.split(", ")
-
-    # convert to np arrays
-    C = np.array(C, dtype=float)
-    ymax = np.array(ymax, dtype=float)
-    normal = np.array(normal, dtype=float)
-
-    # convert constants to float
-    calibratedtime = float(calibratedtime)
-
-    # print(calibratedtime, C, r, ymax, normal)
-
-    return calibratedtime, C, ymax, normal
-
-def testangles():
-
-    calibratedtime, C, ymax, normal = checkmagnetdata()
 
     # start pivoting
     pivoting = True
+    pivotspeed = 100 #below 50 = 0.
+
     testvlenfails = 0  # set errorflag to 0
     # start pivot
-    drivepwm.pivotpartialright(.1, 75) #below 50 = 0.
+    drivepwm.pivotpartialright(.1, pivotspeed)
 
     pivottime = 20
     t_end = time.time() + pivottime
@@ -217,13 +114,10 @@ def testangles():
             pivoting = False
 
         # get sample mag coordinates
-        coordsample = getmediansample(C, ymax, normal)
-
-             # process various data
-        angle, vlenymax, vlensample = getangle(C, ymax, coordsample, normal)
+        coordsample, angle = orientation.getmedianmagnet(C, ymax, normal)
 
          # test data for sanity (angle change direction comparison)
-        rotation_delay = testangle(oldangle,angle,rotation_delay)
+        rotation_delay = testangle(oldangle,angle,rotation_delay,pivotspeed)
 
         #change sampleangle to oldangle
         oldangle = angle
@@ -237,28 +131,21 @@ def testangles():
     print("Finished Testing Pivot - Current Angle is %s" % angle)
 
 
-def waitdelay(t_loop_start, default):
-    t_loop_diff = time.time() - t_loop_start
-    waittime = default - t_loop_diff
-    if waittime < 0:
-        waittime = 0
-    time.sleep(waittime)
 
-def testangle(oldangle, sampleangle,rotation_delay):
+def testangle(oldangle, sampleangle,rotation_delay,pivotspeed):
     anglediff = sampleangle - oldangle
-    anglemulti = sampleangle * oldangle
     if anglediff > 0:
         rotation = "Clockwise/Increase"
-        print("Pivoting at 75 percent speed at angle %10.2f degrees [%s]" % (sampleangle,rotation))
+        print("Pivoting at %d percent speed at angle %10.2f degrees [%s]" % (pivotspeed,sampleangle,rotation))
         rotation_delay = 2 # reset counter
 
     elif -200 < anglediff < 0:
         rotation = "Counter-Clockwise/Decrease"
-        print("Pivoting at 75 percent speed at angle %10.2f degrees [%s] - ERROR" % (sampleangle,rotation))
+        print("Pivoting at %d percent speed at angle %10.2f degrees [%s] - ERROR" % (pivotspeed,sampleangle,rotation))
         rotation_delay = rotation_delay - 1
     elif -200 > anglediff:
         rotation = "Flip"
-        print("Pivoting at 75 percent speed at angle %10.2f degrees [%s]" % (sampleangle,rotation))
+        print("Pivoting at %d percent speed at angle %10.2f degrees [%s]" % (pivotspeed,sampleangle,rotation))
         rotation_delay = 2 # reset counter
     elif anglediff == 0:
         rotation = "Centered"
@@ -271,66 +158,25 @@ def testangle(oldangle, sampleangle,rotation_delay):
 
     return rotation_delay
 
-def getmediansample(C, ymax, normal):
-    #get three samples
-    coordsample1, angle1 = getasample(C, ymax, normal)
-    coordsample2, angle2 = getasample(C, ymax, normal)
-    coordsample3, angle3 = getasample(C, ymax, normal)
 
-    #convert angles to np array and find median
-    angles = np.array((angle1, angle2, angle3),dtype=float)
-    medianangle = np.median(angles)
+def recalibratemagnet():
+    dx, dy, dz = calibratemagnet.calibratemagnet()
+    processmagnet.processmagnet(dx, dy, dz)
+    calibratedtime, C, ymax, normal = orientation.checkmagnetdata()
+    return calibratedtime, C, ymax, normal
 
-    #return coordsample with the median angle
-    if medianangle == angle1:
-        return coordsample1
-    elif medianangle == angle2:
-        return coordsample2
-    elif medianangle == angle3:
-        return coordsample3
-    else:
-        return ArithmeticError
+def waitdelay(t_loop_start, default):
+    t_loop_diff = time.time() - t_loop_start
+    waittime = default - t_loop_diff
+    if waittime < 0:
+        waittime = 0
+    time.sleep(waittime)
 
-def getasample(C, ymax, normal):
-    testvlenerror = 0
-    while True:
-        #get coordinates
-        t_loop_start = time.time()
-        coordsample = orientation.getmagnet()
-
-        # test data for null values
-        if coordsample['x'] == 0 and coordsample['y'] == 0 and coordsample['z'] == 0:
-            # print("Error - Invalid Sample Magnetic Coordinates. Resampling.")
-            waitdelay(t_loop_start, .15)
-            continue #restart loop
-
-        coordsample = [coordsample['x'], coordsample['y'], coordsample['z']]  # convert from dictionary to list
-        coordsample = np.array(coordsample, dtype=float)  # convert from list to np array
-
-        angle, vlenymax, vlensample = getangle(C, ymax, coordsample, normal)
-
-        # test data for sanity (vector length comparison)
-        result = testvlen(vlenymax, vlensample)
-        if result is False:
-            # print("Error - Invalid Vector Length. Resampling.")
-            waitdelay(t_loop_start, .15)
-            testvlenerror += 1
-            if testvlenerror > 2:
-                break #end loop
-            else:
-                continue #restart loop
-        elif result is True:
-            break #end loop
-
-    #delay for GC and refresh
-    waitdelay(t_loop_start, .15)
-
-    return coordsample, angle
-
-
+def reset():
+    gpio.cleanup()
 
 if __name__ == "__main__":
-    # magnetmain()
+    pivottonorth()
     # recalibratemagnet()
-    testangles()
+    # testpivot()
     # reset()

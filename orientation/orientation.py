@@ -1,7 +1,6 @@
 import FaBo9Axis_MPU9250
 import time
 import numpy as np
-import calibratemagnet
 
 mpu9250 = FaBo9Axis_MPU9250.MPU9250()
 
@@ -56,7 +55,7 @@ def testmagnet(delay):
 
     ratee = (counte / count) * 100
     rate = (count-counte)/magnettime
-    print("Collected %d magnetometer samples. %10.2f percent were invalid samples. %10.2f valid samples collected per second." % (count, ratee, rate))
+    print("Collected %d magnetometer samples in %d seconds. %10.2f percent were invalid. %10.2f valid samples collected per second" % (count, magnettime, ratee, rate))
 
 def getmedianmagnet(C, ymax, normal):
     #get three samples
