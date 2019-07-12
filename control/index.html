@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title>Autonomous Ground Robot Camera</title>
+   <script type="text/javascript">
+
+// this opens an event listener in the current window, and runs a corresponding function when the event occurs (key down)
+window.addEventListener("keydown", checkKeyPress, false);
+
+// this function posts a key pressed on the keyboard. Translates the keycode to they key before sending.
+function checkKeyPress(key) {
+    var data = key.key;
+    var req = false;
+    try {
+        // Firefox, Opera 8.0+, Safari
+        req = new XMLHttpRequest();
+    }
+    catch (e) {
+        // Internet Explorer
+        try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e) {
+            try {
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            catch (e) {
+                alert("Your browser does not support AJAX!");
+                return false;
+            }
+        }
+    }
+    req.open("POST", "index2.html", true);
+    req.send(data);
+}
+
+  </script>
+  </head>
+  <body>
+    <img src="stream.mjpg" height="100%">
+  </body>
+</html>
