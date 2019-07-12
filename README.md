@@ -16,7 +16,8 @@ version 5
  
 ## Advanced Functions
 - [x] Terminal Keyboard Control
-- [ ] GUI Overlay
+- [x] Java Keyboard Control on Local Network
+- [ ] Java GUI on Local Network
 - [x] Video Streaming on Local Network
 - [x] Compass Positioning (with Calibration)
 - [ ] Speed Display/Control
@@ -31,7 +32,6 @@ version 5
 
 ## Required Linux Dependencies
 * Python3
-* Motion (for Camera streaming)
 
 ## Required Python Libraries
 * RPi.GPIO
